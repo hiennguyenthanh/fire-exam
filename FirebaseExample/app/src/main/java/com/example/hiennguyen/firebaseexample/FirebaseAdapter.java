@@ -11,7 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,35 +42,42 @@ public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final FoodDetail foodDetails = mData.get(position);
         holder.txtName.setText(foodDetails.getName());
 
         Glide.with(holder.itemView.getContext()).load(foodDetails.getImage()).into(holder.mImage);
-        
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+
+        if (foodDetails.isCompleted()) {
+            holder.mCbComplete.setChecked(true);
+            holder.mCbComplete.setEnabled(false);
+        }
+
+        holder.mCbComplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    holder.mCbComplete.setEnabled(false);
+                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                    mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                FoodDetail foods = snapshot.getValue(FoodDetail.class);
 
-                mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            FoodDetail foods = snapshot.getValue(FoodDetail.class);
-
-                            if (foodDetails.getName().equals(foods.getName())) {
-                                Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
-                                snapshot.getRef().removeValue();
+                                if (foodDetails.getName().equals(foods.getName())) {
+                                    Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
+                                    snapshot.getRef().child("completed").setValue(true);
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
         });
     }
@@ -83,11 +91,11 @@ public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHo
         @BindView(R.id.txt_name)
         TextView txtName;
 
-        @BindView(R.id.btn_delete)
-        Button btnDelete;
-
         @BindView(R.id.img_image)
         ImageView mImage;
+
+        @BindView(R.id.cb_complete)
+        CheckBox mCbComplete;
 
         public ViewHolder(View itemView) {
             super(itemView);

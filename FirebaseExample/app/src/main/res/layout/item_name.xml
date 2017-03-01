@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="wrap_content">
 
     <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:id="@+id/img_image"
             android:contentDescription="@null"/>
 
@@ -15,15 +15,14 @@
             android:text="@string/app_name"
             android:id="@+id/txt_name"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/btn_delete"
-            android:layout_alignParentStart="true"/>
+            android:layout_toEndOf="@+id/img_image"
+            android:layout_margin="@dimen/activity_horizontal_margin"/>
 
-    <Button
+    <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:id="@+id/cb_complete"
             android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
-            android:id="@+id/btn_delete"/>
+            android:layout_centerInParent="true"/>
 
 </RelativeLayout>

@@ -1,5 +1,28 @@
 package com.example.hiennguyen.firebaseexample;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,27 +35,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +93,8 @@ public class MainActivityFragment extends Fragment {
 
         mFirebaseStorage = FirebaseStorage.getInstance();
         mStorageRef = mFirebaseStorage.getReference();
+
+        initSwipe();
 
         return view;
     }
@@ -192,9 +196,51 @@ public class MainActivityFragment extends Fragment {
         });
     }
 
+    private void initSwipe(){
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+                final FoodDetail foodDetails = mFoodDetails.get(position);
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    Toast.makeText(getContext(), "position: " + position, Toast.LENGTH_SHORT).show();
+
+                    mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                FoodDetail foods = snapshot.getValue(FoodDetail.class);
+
+                                if (foodDetails.getName().equals(foods.getName())) {
+                                    Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
+                                    snapshot.getRef().removeValue();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
 
     public void uploadFileLocal() {
-            Uri uri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ando);
+            Uri uri = Uri.parse("and\nroid.resource://" + getContext().getPackageName() + "/" + R.raw.ando);
             StorageReference storageReference = mStorageRef.child("images/" + uri.getLastPathSegment());
 
             storageReference.putFile(uri)
