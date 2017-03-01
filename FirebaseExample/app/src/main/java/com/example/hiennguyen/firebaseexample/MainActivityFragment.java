@@ -240,7 +240,7 @@ public class MainActivityFragment extends Fragment {
 
 
     public void uploadFileLocal() {
-            Uri uri = Uri.parse("and\nroid.resource://" + getContext().getPackageName() + "/" + R.raw.ando);
+            Uri uri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ando);
             StorageReference storageReference = mStorageRef.child("images/" + uri.getLastPathSegment());
 
             storageReference.putFile(uri)
