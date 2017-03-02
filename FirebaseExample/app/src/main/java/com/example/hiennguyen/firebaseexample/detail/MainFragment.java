@@ -21,8 +21,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.hiennguyen.firebaseexample.model.User;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -50,6 +53,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -66,6 +70,12 @@ public class MainFragment extends Fragment {
 
     @BindView(R.id.btn_invite)
     Button mBtnInvite;
+
+    @BindView(R.id.img_avatar)
+    CircleImageView mImageAvatar;
+
+    @BindView(R.id.txt_username)
+    TextView mTxtUserName;
 
     private List<String> mData;
     private List<FoodDetail> mFoodDetails;
@@ -102,6 +112,7 @@ public class MainFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         updateDataChange();
+        updateInfoUser();
 
         mFirebaseStorage = FirebaseStorage.getInstance();
         mStorageRef = mFirebaseStorage.getReference();
@@ -240,6 +251,30 @@ public class MainFragment extends Fragment {
                 mRecyclerView.setAdapter(mAdapter);
                 Log.e(TAG, "onCreateView: " + mFoodDetails.size());
                 progressBar.dismiss();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateInfoUser() {
+        FirebaseUser userFirebase = auth.getCurrentUser();
+        mDatabase.child("users").child(userFirebase.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    Log.e(TAG, "onDataChange1: " + user.getUserName());
+                    mTxtUserName.setText(user.getUserName());
+
+                    if (user.getProfileUrl() == null) {
+                        return;
+                    }
+                    Glide.with(getContext()).load(user.getProfileUrl()).into(mImageAvatar);
+                }
             }
 
             @Override

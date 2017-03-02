@@ -123,12 +123,14 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            User user = new User();
                             for (UserInfo userInfo : task.getResult().getUser().getProviderData()) {
-                                if (userInfo.getProviderId().equals("google.com")) {
-                                    Log.e(TAG, "onComplete: " + userInfo.getDisplayName() + ", " + userInfo.getUid() + ", " + userInfo.getPhotoUrl() + ", " + userInfo.getProviderId());
-                                    User user = new User(userInfo.getDisplayName(), userInfo.getPhotoUrl().toString());
-                                    mDatabase.child("users").child(task.getResult().getUser().getUid()).setValue(user);
+                                Log.e(TAG, "onComplete: " + userInfo.getDisplayName() + ", " + userInfo.getUid() + ", " + userInfo.getPhotoUrl() + ", " + userInfo.getProviderId());
+                                if (userInfo.getProviderId().equals("password")) {
+                                    user.setUserName(userInfo.getUid());
                                 }
+                                user.setUserId(userInfo.getUid());
+                                mDatabase.child("users").child(task.getResult().getUser().getUid()).setValue(user);
                             }
                             Intent intent = new Intent(getContext(), MainActivity.class);
                             startActivity(intent);
