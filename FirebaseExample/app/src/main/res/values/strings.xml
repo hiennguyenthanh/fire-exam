@@ -6,4 +6,6 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="txt_string_add">Add</string>
     <string name="txt_string_logout">Logout</string>
+    <string name="invitation_title">Invite</string>
+    <string name="invitation_message">Invite</string>
 </resources>

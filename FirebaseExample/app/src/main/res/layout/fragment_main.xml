@@ -16,12 +16,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/recycler_view"
-            android:layout_above="@+id/btn_logout"/>
-    <Button
-            android:id="@+id/btn_logout"
+            android:layout_above="@+id/layout_bottom"/>
+
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/txt_string_logout"/>
+            android:id="@+id/layout_bottom"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true">
+        <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_string_logout"/>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Invite"
+                android:id="@+id/btn_invite"/>
+    </LinearLayout>
+
 
 </RelativeLayout>

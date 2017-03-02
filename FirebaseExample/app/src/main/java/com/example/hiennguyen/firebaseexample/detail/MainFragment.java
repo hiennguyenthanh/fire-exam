@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,6 +51,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -60,6 +63,9 @@ public class MainFragment extends Fragment {
 
     @BindView(R.id.btn_logout)
     Button mBtnLogout;
+
+    @BindView(R.id.btn_invite)
+    Button mBtnInvite;
 
     private List<String> mData;
     private List<FoodDetail> mFoodDetails;
@@ -105,21 +111,62 @@ public class MainFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.btn_logout)
-    public void onClick() {
-        auth.signOut();
+    @OnClick({R.id.btn_logout, R.id.btn_invite})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_logout:
+                auth.signOut();
 
-        auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = auth.getCurrentUser();
-                if (user == null && getActivity() != null) {
-                    Intent intent = new Intent(getContext(), AuthActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                }
+                auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user == null && getActivity() != null) {
+                            Intent intent = new Intent(getContext(), AuthActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    }
+                });
+                break;
+            case R.id.btn_invite:
+                onInviteClicked();
+                break;
+        }
+
+    }
+
+    private void onInviteClicked() {
+        Intent intent = new AppInviteInvitation.IntentBuilder("Invite using app")
+                .setMessage("Please using this app!!!!!")
+//                .setDeepLink(Uri.parse("https://ewyc6.app.goo.gl/eNh4"))
+//                .setCallToActionText("INVITATION_CALL_TO_ACTION")
+                .build();
+        startActivityForResult(intent, REQUEST_INVITE);
+    }
+
+    private final int REQUEST_INVITE = 124;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode + "result_ok ="+RESULT_OK);
+
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                StringBuilder sb = new StringBuilder();
+                sb.append("Sent ").append(Integer.toString(ids.length)).append(" invitations: ");
+                for (String id : ids) sb.append("[").append(id).append("]");
+                Toast.makeText(getContext(),"Invited!!!",Toast.LENGTH_SHORT).show();
+
+            } else {
+
+                Toast.makeText(getContext(),"Sorry, unable to send invite.",Toast.LENGTH_SHORT).show();
+
             }
-        });
+        }
     }
 
     @Override
