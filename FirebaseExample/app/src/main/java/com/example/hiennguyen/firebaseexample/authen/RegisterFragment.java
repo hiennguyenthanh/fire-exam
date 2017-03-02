@@ -1,4 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.authen;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.hiennguyen.firebaseexample.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -27,7 +29,7 @@ import static com.google.android.gms.internal.zzt.TAG;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RegisterActivityFragment extends Fragment {
+public class RegisterFragment extends Fragment {
     @BindView(R.id.ed_input_email)
     EditText mInputEmail;
 
@@ -40,7 +42,7 @@ public class RegisterActivityFragment extends Fragment {
     private Unbinder mUnbind;
     private FirebaseAuth mFirebaseAuth;
 
-    public RegisterActivityFragment() {
+    public RegisterFragment() {
     }
 
     @Override

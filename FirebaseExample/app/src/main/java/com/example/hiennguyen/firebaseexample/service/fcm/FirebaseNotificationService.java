@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.hiennguyen.firebaseexample.MainActivity;
+import com.example.hiennguyen.firebaseexample.detail.MainActivity;
 import com.example.hiennguyen.firebaseexample.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

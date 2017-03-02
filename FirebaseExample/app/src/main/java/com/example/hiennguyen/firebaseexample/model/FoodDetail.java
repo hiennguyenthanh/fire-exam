@@ -1,4 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 

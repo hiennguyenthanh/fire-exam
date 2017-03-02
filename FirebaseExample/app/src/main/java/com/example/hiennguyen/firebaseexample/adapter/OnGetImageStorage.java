@@ -1,4 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.adapter;
 
 import android.net.Uri;
 

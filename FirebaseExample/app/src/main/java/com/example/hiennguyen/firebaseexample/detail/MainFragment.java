@@ -1,4 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.detail;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -36,6 +36,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import com.example.hiennguyen.firebaseexample.R;
+import com.example.hiennguyen.firebaseexample.adapter.FirebaseAdapter;
+import com.example.hiennguyen.firebaseexample.adapter.OnGetImageStorage;
+import com.example.hiennguyen.firebaseexample.authen.AuthActivity;
+import com.example.hiennguyen.firebaseexample.model.FoodDetail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +53,8 @@ import butterknife.Unbinder;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
-    private static final String TAG = MainActivityFragment.class.getSimpleName();
+public class MainFragment extends Fragment {
+    private static final String TAG = MainFragment.class.getSimpleName();
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
@@ -71,7 +77,7 @@ public class MainActivityFragment extends Fragment {
         this.onListener = onListener;
     }
 
-    public MainActivityFragment() {
+    public MainFragment() {
     }
 
     @Override

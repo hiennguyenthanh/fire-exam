@@ -1,4 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.authen;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hiennguyen.firebaseexample.detail.MainActivity;
+import com.example.hiennguyen.firebaseexample.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,7 +29,7 @@ import butterknife.Unbinder;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class AuthActivityFragment extends Fragment {
+public class AuthFragment extends Fragment {
     @BindView(R.id.ed_input_email)
     EditText mInputEmail;
 
@@ -46,7 +49,7 @@ public class AuthActivityFragment extends Fragment {
     private FirebaseAuth mFirebaseAuth;
     private ProgressDialog progressDialog;
 
-    public AuthActivityFragment() {
+    public AuthFragment() {
     }
 
     @Override

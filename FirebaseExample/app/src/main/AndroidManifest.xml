@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".AuthActivity"
+            android:name=".authen.AuthActivity"
             android:label="@string/title_activity_auth"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -24,17 +24,17 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".detail.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ForgotPassActivity"
+            android:name=".authen.ForgotPassActivity"
             android:label="@string/title_activity_forgot_pass"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-                android:name=".RegisterActivity"
+                android:name=".authen.RegisterActivity"
                 android:label="@string/title_activity_register"
                 android:theme="@style/AppTheme.NoActionBar"/>
 

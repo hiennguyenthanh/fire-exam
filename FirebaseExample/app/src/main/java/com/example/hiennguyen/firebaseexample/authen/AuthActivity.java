@@ -1,8 +1,10 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.authen;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.example.hiennguyen.firebaseexample.R;
 
 public class AuthActivity extends AppCompatActivity {
 
