@@ -1,9 +1,12 @@
 package com.example.hiennguyen.firebaseexample.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 /**
  * Created by hiennguyen on 02/03/2017
  */
 
+@IgnoreExtraProperties
 public class User {
     private String userId;
     private String userName;
@@ -12,8 +15,7 @@ public class User {
     public User() {
     }
 
-    public User(String userId, String userName, String profileUrl) {
-        this.userId = userId;
+    public User(String userName, String profileUrl) {
         this.userName = userName;
         this.profileUrl = profileUrl;
     }

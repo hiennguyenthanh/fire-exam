@@ -14,6 +14,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 
 import com.example.hiennguyen.firebaseexample.detail.MainActivity;
 import com.example.hiennguyen.firebaseexample.R;
+import com.example.hiennguyen.firebaseexample.model.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +70,7 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
     private GoogleSignInOptions googleSignInOptions;
     private GoogleApiClient mGoogleApiClient;
     private final int RC_SIGN_IN = 123;
+    private DatabaseReference mDatabase;
 
     public AuthFragment() {
     }
@@ -77,8 +81,10 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
         View view = inflater.inflate(R.layout.fragment_auth, container, false);
         mUnbind = ButterKnife.bind(this, view);
         progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Please wail...");
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         if (mFirebaseAuth.getCurrentUser() != null) {
             Intent intent = new Intent(getContext(), MainActivity.class);
@@ -110,13 +116,20 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
             case R.id.btn_login:
                 String email = mInputEmail.getText().toString();
                 String password = mInputPassword.getText().toString();
-                progressDialog.setMessage("Please wail...");
                 progressDialog.show();
 
+                //login with email and password
                 mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            for (UserInfo userInfo : task.getResult().getUser().getProviderData()) {
+                                if (userInfo.getProviderId().equals("google.com")) {
+                                    Log.e(TAG, "onComplete: " + userInfo.getDisplayName() + ", " + userInfo.getUid() + ", " + userInfo.getPhotoUrl() + ", " + userInfo.getProviderId());
+                                    User user = new User(userInfo.getDisplayName(), userInfo.getPhotoUrl().toString());
+                                    mDatabase.child("users").child(task.getResult().getUser().getUid()).setValue(user);
+                                }
+                            }
                             Intent intent = new Intent(getContext(), MainActivity.class);
                             startActivity(intent);
                             getActivity().finish();
@@ -156,6 +169,7 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
+                progressDialog.show();
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
@@ -175,9 +189,11 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                        for (UserInfo user : task.getResult().getUser().getProviderData()) {
-                            if (user.getProviderId().equals("google.com")) {
-                                Log.e(TAG, "onComplete: " + user.getDisplayName() + ", " + user.getUid() + ", " + user.getPhotoUrl() + ", " + user.getProviderId());
+                        for (UserInfo userInfo : task.getResult().getUser().getProviderData()) {
+                            if (userInfo.getProviderId().equals("google.com")) {
+                                Log.e(TAG, "onComplete: " + userInfo.getDisplayName() + ", " + userInfo.getUid() + ", " + userInfo.getPhotoUrl() + ", " + userInfo.getProviderId());
+                                User user = new User(userInfo.getDisplayName(), userInfo.getPhotoUrl().toString());
+                                mDatabase.child("users").child(task.getResult().getUser().getUid()).setValue(user);
                             }
                         }
 
@@ -193,6 +209,9 @@ public class AuthFragment extends Fragment implements GoogleApiClient.OnConnecti
                             Toast.makeText(getContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
+
+                        progressDialog.dismiss();
+
                     }
                 });
     }
